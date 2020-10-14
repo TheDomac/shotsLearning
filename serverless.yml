@@ -25,6 +25,8 @@ provider:
   runtime: nodejs12.x
   region: eu-central-1
 
+plugins:
+  - serverless-offline
 # you can overwrite defaults here
 #  stage: dev
 
@@ -60,16 +62,16 @@ provider:
 functions:
   app:
     handler: index.serverlessApp
-#    events:
-#      - http: ANY /
-#      - http: "ANY {proxy+}"
-#    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
+#    The following are a few example events you can configure
     events:
-      - http:
-          path: /name
-          method: get
+      - http: 
+          path: /
+          method: any
+      - http: 
+          path: /{proxy+}
+          method: any
 #      - websocket: $connect
 #      - s3: ${env:BUCKET}
 #      - schedule: rate(10 minutes)

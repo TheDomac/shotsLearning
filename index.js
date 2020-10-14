@@ -1,34 +1,53 @@
 const serverless = require("serverless-http");
 const express = require("express");
 const axios = require("axios");
+const errorMiddleware = require("@reactor4/forklift").errorMiddleware;
+const IO = require("@reactor4/forklift").IO;
+const asyncMiddleware = require("@reactor4/forklift").asyncMiddleware;
+const bodyParser = require("body-parser");
 
 const app = express();
 
-app.use(
-  `/name`,
-  async (req, res) => {
-    try {
-      const response = await axios.get('https://api.namefake.com/');
-  
-      res.json(response.data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  }
-);
+app.use(bodyParser.json());
+
+const router = express.Router();
+
+const handleBusinessLogic = () => {
+  return asyncMiddleware(async (req, res) => {
+    IO.set(res, req.body)
+    console.log("!REQ.BODY", req.body);
+  })
+}
+
+const exampleSchema = {
+  $schema: "http://json-schema.org/draft-07/schema#",
+  title: "Example Schema",
+  description: "Schema for creating examples",
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+    },
+  },
+  additionalProperties: false,
+  required: ["name"],
+};
+
+const requestIO = new IO({ reqBodySchema: exampleSchema });
+
+router.post("/",
+  requestIO.processRequest(),
+  handleBusinessLogic(),
+  requestIO.sendResponse(),
+)
 
 app.use(
-  `/`,
-  (req, res) => {
-    try {
-      // const response = await axios.get('https://api.namefake.com/');
-  
-      res.send("radi default");
-    } catch (err) {
-      console.error(err.message);
-    }
-  }
+  `/name`,
+  router
 );
+
+
+app.use(errorMiddleware());
 
 const serverlessApp = serverless(app);
 
