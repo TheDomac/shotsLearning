@@ -24,9 +24,13 @@ provider:
   name: aws
   runtime: nodejs12.x
   region: eu-central-1
+  environment:
+    ACCESS_PASSWORD: ${env:ACCESS_PASSWORD}
 
 plugins:
+  - serverless-dotenv-plugin
   - serverless-offline
+
 # you can overwrite defaults here
 #  stage: dev
 
@@ -46,9 +50,6 @@ plugins:
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
 
 # you can add packaging information here
 #package:

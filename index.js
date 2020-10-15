@@ -5,8 +5,13 @@ const errorMiddleware = require("@reactor4/forklift").errorMiddleware;
 const IO = require("@reactor4/forklift").IO;
 const asyncMiddleware = require("@reactor4/forklift").asyncMiddleware;
 const bodyParser = require("body-parser");
+const basicAuth = require("express-basic-auth");
 
 const app = express();
+
+app.use(basicAuth({
+  users: { user: process.env.ACCESS_PASSWORD },
+}))
 
 app.use(bodyParser.json());
 
@@ -15,7 +20,6 @@ const router = express.Router();
 const handleBusinessLogic = () => {
   return asyncMiddleware(async (req, res) => {
     IO.set(res, req.body)
-    console.log("!REQ.BODY", req.body);
   })
 }
 
