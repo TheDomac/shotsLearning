@@ -1,0 +1,1 @@
+export { someFeatureSchema } from "./someFeatureSchema";
